@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProductsList</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="text-end mt-4">
+          <button
+            type="button"
+            class="btn btn-dark"
+            @click="openModal('addProduct')"
+          >
+            建立新產品
+          </button>
+        </div>
+        <!-- 第一階段建立產品列表 -->
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th width="120">分類</th>
+              <th width="120">產品名稱</th>
+              <th width="120">原價</th>
+              <th width="120">售價</th>
+              <th width="120">是否啟用</th>
+              <th width="120">編輯</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in products" :key="item.id">
+              <td>{{item.category}}</td>
+              <td>{{item.title}}</td>
+              <td>{{item.origin_price}}</td>
+              <td>{{item.price}}</td>
+              <td>
+                <span class="text-success" v-if="item.is_enabled">啟用</span>
+                <span v-else>未啟用</span>
+              </td>
+              <td>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark"
+                    @click="openModal('editProduct',item)"
+                  >
+                    編輯
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger"
+                    @click="openModal('delProduct',item)"
+                  >
+                    刪除
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- 這邊可以用物件轉陣列的方法Object.values()去看陣列長度 -->
+        <p>
+          本頁有
+          <span class="text-success">{{Object.values(products).length}}</span>
+          項產品
+        </p>
+        <!-- 加入頁面功能 -->
+        <!-- pages 是 pagination.js(內層元件)的第四行 , pagination是products.js(根元件)的第18行 -->
+        <!--  -->
+        <!-- get-product 是在 pagination.js(內層元件)的 $emit getProducts 是 products.js(外層元件)的38行getProducts()-->
+        <pagination :pages="pagination" @get-products="getProducts" ></pagination>
+      </div>
+      <!-- 第二+三階段 新增/編輯用modal -->
+      <div
+        class="modal"
+        tabindex="-1"
+        id="productModal"
+        ref="productModal"
+        aria-labelledby="productModal"
+        aria-hidden="true"
+      >
+      <update-modal :temp-product="tempProduct" :is-new="isNew"          @get-products="getProducts" @close-modal="closeModal('editProduct')"></update-modal>
+      </div>
+      <!-- 第四階段 刪除用modal -->
+      <div
+            class="modal fade"
+            tabindex="-1"
+            id="delProductModal"
+            ref="delModal"
+            aria-labelledby="delProductModalLabel"
+            aria-hidden="true">
+      <del-product-modal :temp-product="tempProduct" @get-products="getProducts" @close-modal="closeModal('delProduct')"></del-product-modal>
+    </div>
+  </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="./JS/products.js"></script>
+  </body>
+</html>
